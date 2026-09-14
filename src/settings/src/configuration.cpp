@@ -105,13 +105,6 @@ void Configuration::retrieveFromStorage( QSettings& settings )
 
     language_ = settings.value( "view.language", DefaultConfiguration.language_ ).toString();
 
-    enableQtHighDpi_
-        = settings.value( "view.qtHiDpi", DefaultConfiguration.enableQtHighDpi_ ).toBool();
-
-    scaleFactorRounding_
-        = settings.value( "view.scaleFactorRounding", DefaultConfiguration.scaleFactorRounding_ )
-              .toInt();
-
     // Regexp types
     mainRegexpType_ = static_cast<SearchRegexpType>(
         settings
@@ -413,8 +406,6 @@ void Configuration::saveToStorage( QSettings& settings ) const
     settings.setValue( "view.language", language_ );
     settings.setValue( "view.textWrap", useTextWrap_ );
 
-    settings.setValue( "view.qtHiDpi", enableQtHighDpi_ );
-    settings.setValue( "view.scaleFactorRounding", scaleFactorRounding_ );
 
     settings.setValue( "view.hideAnsiColorSequences", hideAnsiColorSequences_ );
 

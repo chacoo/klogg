@@ -9,9 +9,7 @@
     !define PLATFORM 'unknown'
 !endif
 
-!ifndef QT_MAJOR
-    !define QT_MAJOR 'Qt5'
-!endif
+!define QT_MAJOR 'Qt6'
 
 # Headers
 !include "MUI2.nsh"
@@ -116,18 +114,12 @@ Section "Qt Runtime libraries" qtlibs
     File release\${QT_MAJOR}Widgets.dll
     File release\${QT_MAJOR}Concurrent.dll
     File release\${QT_MAJOR}Xml.dll
-!if ${QT_MAJOR} == "Qt6"
     File release\${QT_MAJOR}Core5Compat.dll
-!endif
 
     SetOutPath $INSTDIR\platforms
     File release\platforms\qwindows.dll
     SetOutPath $INSTDIR\styles
-!if ${QT_MAJOR} == "Qt6"
     File release\styles\qmodernwindowsstyle.dll
-!else
-    File release\styles\qwindowsvistastyle.dll
-!endif
 
 SectionEnd
 
@@ -185,12 +177,6 @@ Section "Uninstall"
     Delete "$INSTDIR\libstdc++-6.dll"
     Delete "$INSTDIR\libgcc_s_seh-1.dll"
     Delete "$INSTDIR\libgcc_s_dw2-1.dll"
-    Delete "$INSTDIR\Qt5Widgets.dll"
-    Delete "$INSTDIR\Qt5Core.dll"
-    Delete "$INSTDIR\Qt5Gui.dll"
-    Delete "$INSTDIR\Qt5Network.dll"
-    Delete "$INSTDIR\Qt5Concurrent.dll"
-    Delete "$INSTDIR\Qt5Xml.dll"
     Delete "$INSTDIR\Qt6Widgets.dll"
     Delete "$INSTDIR\Qt6Core.dll"
     Delete "$INSTDIR\Qt6Gui.dll"

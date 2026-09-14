@@ -58,12 +58,6 @@ xcopy %QTDIR%\plugins\styles\qwindowsvistastyle.dll %KLOGG_WORKSPACE%\release\st
 xcopy %QTDIR%\plugins\styles\qmodernwindowsstyle.dll %KLOGG_WORKSPACE%\release\styles /y
 
 echo "Copying packaging files..."
-md %KLOGG_WORKSPACE%\chocolately
-xcopy %KLOGG_WORKSPACE%\packaging\windows\klogg.nuspec chocolately /y
-
-md %KLOGG_WORKSPACE%\chocolately\tools
-xcopy %KLOGG_WORKSPACE%\packaging\windows\chocolatelyInstall.ps1 chocolately\tools\ /y
-
 xcopy %KLOGG_WORKSPACE%\packaging\windows\klogg.nsi  /y
 xcopy %KLOGG_WORKSPACE%\packaging\windows\FileAssociation.nsh  /y
 

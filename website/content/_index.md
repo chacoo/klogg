@@ -26,7 +26,7 @@ Here is what _klogg_ looks like:
 {{< columns >}}
  _klogg_ inherited a lot of features from _glogg_
 
- - Runs on Unix-like systems, Windows and Mac thanks to Qt5
+ - Runs on Unix-like systems, Windows and Mac thanks to Qt6
  - Displays search results separately from original file
  - Supports Perl-compatible regular expressions
  - Colorizes the log and search results
@@ -63,4 +63,3 @@ Latest development builds can be downloaded from releases on Github:
 {{< button href="https://github.com/variar/klogg/releases/tag/continuous-win" >}}Windows{{< /button >}}
 {{< button href="https://github.com/variar/klogg/releases/tag/continuous-linux" >}}Linux{{< /button >}}
 {{< button href="https://github.com/variar/klogg/releases/tag/continuous-osx" >}}Mac{{< /button >}}
-

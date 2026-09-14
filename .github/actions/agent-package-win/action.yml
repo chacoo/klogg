@@ -39,7 +39,7 @@ runs:
       uses: joncloud/makensis-action@v3.3
       with:
         script-file: klogg.nsi
-        arguments: "-DVERSION=%KLOGG_VERSION% -DPLATFORM=%KLOGG_ARCH% -DQT_MAJOR=%KLOGG_QT%" 
+        arguments: "-DVERSION=%KLOGG_VERSION% -DPLATFORM=%KLOGG_ARCH%"
     
     - name: Win package
       shell: cmd
@@ -54,4 +54,3 @@ runs:
     #  shell: cmd
     #  run: |
     #    packaging\windows\codesign_client.exe --debug %KLOGG_BUILD_ROOT%\packages\klogg-%KLOGG_VERSION%-%KLOGG_ARCH%-%KLOGG_QT%-setup.exe
-      

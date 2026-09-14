@@ -20,7 +20,7 @@ To build Klogg:
 
 - cmake 3.12 or later to generate build files
 - C++ compiler with decent C++17 support (at least gcc 7.5, clang 7, msvc 19.14)
-- Qt libraries 5.9 or later (CI builds use Qt 5.9.5/5.12.5/5.15.2):
+- Qt 6 libraries (macOS and Windows CI builds use Qt 6.7.3):
   - QtCore
   - QtGui
   - QtWidgets
@@ -28,6 +28,11 @@ To build Klogg:
   - QtNetwork
   - QtXml
   - QtTools
+  - QtCore5Compat (the Qt 6 compatibility module used for text encoding)
+
+Qt 5 builds are no longer supported. Current CI targets Windows x64, macOS
+x86_64 and arm64, and Ubuntu 24.04 x64. The Qt 5 Windows x86, older Linux,
+and AppImage build and packaging configurations have been removed.
 
 To build Hyperscan regular expressions backend (default):
 
@@ -64,12 +69,12 @@ Memory allocator override can be turned off by passing `-DKLOGG_OVERRIDE_MALLOC`
 
 ### Building on Linux
 
-Here is how to build klogg on Ubuntu 18.04.
+Here is how to build klogg on Ubuntu 24.04.
 
 Install dependencies:
 
 ```
-sudo apt-get install build-essential cmake qtbase5-dev libboost-all-dev ragel
+sudo apt-get install build-essential cmake ninja-build qt6-base-dev qt6-5compat-dev qt6-tools-dev qt6-tools-dev-tools libboost-dev ragel
 ```
 
 Configure and build klogg:
@@ -82,10 +87,10 @@ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 cmake --build .
 ```
 
-**_If cmake gives error about missing "Qt5LinguistTools" configuration files, try running:_**
+If CMake cannot find Qt6LinguistTools, install the Qt 6 tools development package:
 
 ```bash
-sudo apt-get install qttools5-dev
+sudo apt-get install qt6-tools-dev
 ```
 
 Binaries are placed into `build_root/output`.
@@ -94,14 +99,14 @@ See `.github/workflows/ci-build.yml` for more information on build process.
 
 ### Building on Windows
 
-Install Microsoft Visual Studio 2017 or 2019 with C++ support.
+Install Microsoft Visual Studio 2022 with C++ support.
 Community edition can be downloaded from [Microsoft](https://visualstudio.microsoft.com/vs/).
 
-Intall latest Qt version using [online installer](https://www.qt.io/download-qt-installer).
-Make sure to select version matching Visual Studio installation. 64-bit libraries are recommended.
+Install Qt 6 using the [online installer](https://www.qt.io/download-qt-installer),
+including Qt 5 Compatibility and Qt Tools. Select the MSVC 64-bit libraries.
 
 Install CMake from [Kitware](https://cmake.org/download/).
-Use version 3.14 or later for Visual Studio 2019 support.
+Use version 3.21 or later for Visual Studio 2022 support.
 
 Download the Boost source code from http://www.boost.org/users/download/.
 Extract to some folder. Directory structure should be something like `C:\Boost\boost_1_63_0`.
@@ -137,7 +142,7 @@ Configure klogg solution (use CMake generator matching Visual Studio version):
 cd <path_to_project_root>
 md build_root
 cd build_root
-cmake -G "Visual Studio 16 2019 Win64" -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+cmake -G "Visual Studio 17 2022" -A x64 ..
 ```
 
 CMake should generate `klogg.sln` file in `<path_to_project_root>\build_root` directory. Open solution and build it.
@@ -149,23 +154,19 @@ Put libcrypto-1_1 and libssl-1_1 for desired architecture near klogg binaries.
 
 ### Building on Mac OS
 
-Klogg requires macOS High Sierra (10.13) or higher.
+The minimum macOS version depends on the selected Qt 6 build. Current CI targets
+macOS 13 for Intel and macOS 14 for Apple Silicon.
 
-Install [Homebrew](https://brew.sh/) using terminal:
-
-```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
-
-Homebrew installer should also install xcode command line tools.
+Install Xcode Command Line Tools and [Homebrew](https://brew.sh/).
 
 Download and install build dependencies:
 
 ```
-brew install cmake ninja qt boost ragel
+brew install cmake ninja qt qt5compat boost ragel
 ```
 
-Usually path to qt installation looks like `/usr/local/Cellar/qt/5.14.0/lib/cmake/Qt5`
+Use `brew --prefix qt` to locate Qt 6. The `qt5compat` package belongs to Qt 6;
+it does not install Qt 5.
 
 Configure and build klogg:
 
@@ -173,7 +174,7 @@ Configure and build klogg:
 cd <path_to_klogg_repository_clone>
 mkdir build_root
 cd build_root
-cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DQt5_DIR=<path_to_qt_install> ..
+cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_PREFIX_PATH="$(brew --prefix qt)" ..
 cmake --build .
 ```
 
@@ -181,12 +182,13 @@ Binaries are placed into `build_root/output`.
 
 By default, klogg will rely on cmake to figure out target MacOS version. Usually it uses build host version.
 To override default cmake value pass an option `-DKLOGG_OSX_DEPLOYMENT_TARGET=<target>` to cmake during configuration step,
-`<target>` is one of `10.14`, `10.15`, `11`, `12`. Klogg's traget must be greater or equal to target used by Qt libraries.
+Klogg's target must be greater than or equal to the target used by Qt libraries.
+For a native Apple Silicon build, add `-DCMAKE_OSX_ARCHITECTURES=arm64` and use arm64 dependencies.
 
 ## Running tests
 
-Tests are built by default. To turn them off pass `-DBUILD_TESTS:BOOL=OFF` to cmake.
-Tests use catch2 (bundled with klogg sources) and require Qt5Test module. Tests can be run using ctest tool provider by CMake:
+Tests are built by default. To turn them off pass `-DKLOGG_BUILD_TESTS=OFF` to cmake.
+Tests use Catch2 (downloaded by CPM) and require Qt6Test. Tests can be run using CTest:
 
 ```
 cd <path_to_klogg_repository_clone>

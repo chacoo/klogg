@@ -50,16 +50,8 @@ jobs:
     - name: Upload symbols linux
       shell: sh
       run: |
-        xz -d ./packages-focal/klogg_focal.debug.xz
-        xz -d ./packages-jammy/klogg_jammy.debug.xz
         xz -d ./packages-noble/klogg_noble.debug.xz
-        xz -d ./packages-oracle/klogg_oracle.debug.xz
-        xz -d ./packages-appimage/klogg_appimage.debug.xz
-        sentry-cli upload-dif ./packages-focal/klogg_focal.debug ./packages-focal/klogg_focal
-        sentry-cli upload-dif ./packages-jammy/klogg_jammy.debug ./packages-jammy/klogg_jammy
         sentry-cli upload-dif ./packages-noble/klogg_noble.debug  ./packages-noble/klogg_noble
-        sentry-cli upload-dif ./packages-oracle/klogg_oracle.debug ./packages-oracle/klogg_oracle
-        sentry-cli upload-dif ./packages-appimage/klogg_appimage.debug  ./packages-appimage/klogg_appimage
 
     - name: Upload symbols mac
       shell: sh
@@ -70,25 +62,16 @@ jobs:
     - name: Upload symbols win
       shell: sh
       run: |
-        sentry-cli upload-dif ./packages-windows-x86-qt5/klogg-$KLOGG_VERSION-x86-Qt5-pdb.zip 
         sentry-cli upload-dif ./packages-windows-x64-qt6/klogg-$KLOGG_VERSION-x64-Qt6-pdb.zip
 
     - name: Cleanup release artifacts
       shell: sh
       run: |
-        rm -rf ./packages-focal/klogg_focal
-        rm -rf ./packages-jammy/klogg_jammy
         rm -rf ./packages-noble/klogg_noble
-        rm -rf ./packages-oracle/klogg_oracle
-        rm -rf ./packages-appimage/klogg_appimage
         rm -rf ./packages-macos-intel-qt6/klogg-x64.app
         rm -rf ./packages-macos-arm-qt6/klogg-arm64.app
         mkdir ./linux-debug
-        mv ./packages-focal/klogg_focal.debug ./linux-debug
-        mv ./packages-jammy/klogg_jammy.debug ./linux-debug
         mv ./packages-noble/klogg_noble.debug ./linux-debug
-        mv ./packages-oracle/klogg_oracle.debug ./linux-debug
-        mv ./packages-appimage/klogg_appimage.debug ./linux-debug
         tar -cJf ./linux-debug/klogg-$KLOGG_VERSION-symbols.tar.xz ./linux-debug/*
         rm ./linux-debug/*.debug
 
@@ -96,14 +79,14 @@ jobs:
       shell: sh
       run: |
         mkdir ./packages-bin
-        mv ./packages-appimage/klogg_deps.tar.xz ./packages-bin/klogg-$KLOGG_VERSION-deps.tar.xz
-        ar p  ./packages-focal/klogg-$KLOGG_VERSION-focal.deb data.tar.gz > ./packages-bin/klogg-$KLOGG_VERSION-bin.tar.gz
+        mv ./packages-noble/klogg_deps.tar.xz ./packages-bin/klogg-$KLOGG_VERSION-deps.tar.xz
+        dpkg-deb --fsys-tarfile ./packages-noble/klogg-$KLOGG_VERSION-noble.deb | gzip > ./packages-bin/klogg-$KLOGG_VERSION-bin.tar.gz
         mv ./klogg_version/klogg_version.txt ./packages-bin
 
     - name: Prepare checksums
       shell: sh
       run: |
-        sha256sum --binary ./packages-bin/* ./packages-focal/* ./packages-jammy/* ./packages-noble/* ./packages-oracle/* ./packages-appimage/*  > ./packages-bin/klogg-$KLOGG_VERSION-sha256.txt
+        sha256sum --binary ./packages-bin/* ./packages-noble/*  > ./packages-bin/klogg-$KLOGG_VERSION-sha256.txt
         
     - name: Release win
       uses: "marvinpinto/action-automatic-releases@latest"
@@ -112,7 +95,6 @@ jobs:
         automatic_release_tag: continuous-win
         prerelease: true
         files: |
-          ./packages-windows-x86-qt5/*
           ./packages-windows-x64-qt6/*
 
     - name: Release linux
@@ -122,11 +104,7 @@ jobs:
         automatic_release_tag: continuous-linux
         prerelease: true
         files: |
-          ./packages-focal/*
-          ./packages-jammy/*
           ./packages-noble/*
-          ./packages-oracle/*
-          ./packages-appimage/*
           ./packages-bin/*
           ./linux-debug/*
 

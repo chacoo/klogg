@@ -22,6 +22,11 @@ on:
       - latest.json
       - .gitignore
   workflow_dispatch:
+    inputs:
+      windows_asan:
+        description: Diagnose Windows memory errors with AddressSanitizer
+        type: boolean
+        default: false
 
 jobs:
   SaveVersion:
@@ -41,7 +46,7 @@ jobs:
           if-no-files-found: error
 
   Linux:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    if: "!inputs.windows_asan && !contains(github.event.head_commit.message, '[skip ci]')"
     strategy:
       fail-fast: false
       matrix:
@@ -86,7 +91,7 @@ jobs:
           if-no-files-found: error      
 
   Mac:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    if: "!inputs.windows_asan && !contains(github.event.head_commit.message, '[skip ci]')"
     strategy:
       fail-fast: false
       matrix:
@@ -188,9 +193,29 @@ jobs:
         with:
           arch: ${{ matrix.config.arch }}
 
+      - name: Enable memory diagnostics
+        if: inputs.windows_asan
+        shell: pwsh
+        run: |
+          $options = "$env:KLOGG_CMAKE_OPTS -DKLOGG_USE_LTO=OFF -DTBB_ENABLE_IPO=OFF -DKLOGG_USE_SENTRY=OFF -DMI_TRACK_ASAN=ON -DCMAKE_C_FLAGS=/fsanitize=address -DCMAKE_CXX_FLAGS=/fsanitize=address"
+          $options += ' -DCMAKE_EXE_LINKER_FLAGS=/INCREMENTAL:NO -DCMAKE_SHARED_LINKER_FLAGS=/INCREMENTAL:NO -DCMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO=/DEBUG -DCMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO=/DEBUG'
+          "KLOGG_CMAKE_OPTS=$options" >> $env:GITHUB_ENV
+
       - uses: ./.github/actions/agent-build
       - uses: ./.github/actions/agent-run-tests
+      - name: Repeat integration tests under AddressSanitizer
+        if: inputs.windows_asan
+        shell: pwsh
+        run: ctest --test-dir $env:KLOGG_BUILD_ROOT -R klogg_itests --repeat until-fail:20 --output-on-failure
+      - name: Upload memory diagnostic logs
+        if: always() && inputs.windows_asan
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-asan-logs
+          path: '${{ env.KLOGG_BUILD_ROOT }}/Testing/Temporary/*'
+          if-no-files-found: warn
       - uses: ./.github/actions/agent-package-win
+        if: '!inputs.windows_asan'
         with:
           s3-key-id: ${{ secrets.WIN_CS_KEY_ID }}
           s3-secret: ${{ secrets.WIN_CS_SECRET }}
@@ -198,6 +223,7 @@ jobs:
      
 # Final upload of all packages
       - uses: actions/upload-artifact@v4
+        if: '!inputs.windows_asan'
         with:
           name: packages-${{ matrix.config.artifacts_id }}
           path: '${{ env.KLOGG_BUILD_ROOT }}/packages/*'

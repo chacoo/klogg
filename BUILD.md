@@ -31,7 +31,7 @@ To build Klogg:
   - QtCore5Compat (the Qt 6 compatibility module used for text encoding)
 
 Qt 5 builds are no longer supported. Current CI targets Windows x64, macOS
-x86_64 and arm64, and Ubuntu 24.04 x64. The Qt 5 Windows x86, older Linux,
+arm64, and Ubuntu 24.04 x64. The Qt 5 Windows x86, older Linux,
 and AppImage build and packaging configurations have been removed.
 
 To build Hyperscan regular expressions backend (default):
@@ -155,7 +155,7 @@ Put libcrypto-1_1 and libssl-1_1 for desired architecture near klogg binaries.
 ### Building on Mac OS
 
 The minimum macOS version depends on the selected Qt 6 build. Current CI targets
-macOS 13 for Intel and macOS 14 for Apple Silicon.
+macOS 14 for Apple Silicon. macOS Intel builds are no longer included in CI.
 
 Install Xcode Command Line Tools and [Homebrew](https://brew.sh/).
 

@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
 
+# Older bundled dependencies declare policy versions no longer accepted by CMake 4.
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0" AND NOT DEFINED CMAKE_POLICY_VERSION_MINIMUM)
+  set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+endif()
+
 project(
   klogg
   VERSION 24.11.0

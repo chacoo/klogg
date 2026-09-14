@@ -120,6 +120,9 @@ install(
 
 if(WIN32)
   if(TARGET tbb)
+    if(MSVC)
+      set_target_properties(tbb PROPERTIES PDB_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:klogg>")
+    endif()
     add_custom_command(
       TARGET klogg
       POST_BUILD

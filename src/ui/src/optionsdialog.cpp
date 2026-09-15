@@ -302,8 +302,6 @@ void OptionsDialog::updateDialogFromConfig()
     fontSmoothCheckBox->setChecked( config.forceFontAntialiasing() );
     boldFontCheckBox->setChecked( config.useBoldFont() );
     wrapTextCheckBox->setChecked( config.useTextWrap() );
-    enableQtHiDpiCheckBox->setChecked( config.enableQtHighDpi() );
-    scaleRoundingComboBox->setCurrentIndex( config.scaleFactorRounding() - 1 );
 
     // Language
     auto langIdx = languageComboBox->findData( { config.language() } );
@@ -493,8 +491,6 @@ void OptionsDialog::updateConfigFromDialog()
     config.setForceFontAntialiasing( fontSmoothCheckBox->isChecked() );
     config.setUseBoldFont( boldFontCheckBox->isChecked() );
     config.setUseTextWrap( wrapTextCheckBox->isChecked() );
-    config.setEnableQtHighDpi( enableQtHiDpiCheckBox->isChecked() );
-    config.setScaleFactorRounding( scaleRoundingComboBox->currentIndex() + 1 );
 
     config.setMainRegexpType( getRegexpTypeFromIndex( mainSearchBox->currentIndex() ) );
     config.setMainSearchBackColor( mainSearchColor_ );

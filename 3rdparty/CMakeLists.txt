@@ -107,9 +107,7 @@ else()
   target_include_directories(klogg_uchardet_wrapper INTERFACE ${UCHARDET_INCLUDE_DIR})
 endif()
 
-if(${QT_VERSION_MAJOR} EQUAL 6) 
 set(CPM_USE_LOCAL_PACKAGES OFF)
-endif()
 
 cpmaddpackage(
   NAME
@@ -127,10 +125,8 @@ if(NOT KF5Archive_ADDED)
   target_link_libraries(klogg_karchive INTERFACE KF5::Archive)
 endif()
 
-if(${QT_VERSION_MAJOR} EQUAL 6)
 message("Resetting CPM_USE_LOCAL_PACKAGES to ${_TMP_CPM_USE_LOCAL_PACKAGES}")
 set(CPM_USE_LOCAL_PACKAGES ${_TMP_CPM_USE_LOCAL_PACKAGES})
-endif()
 
 cpmaddpackage(
   NAME
@@ -184,7 +180,7 @@ if(KDSingleApplication_ADDED)
   )
 
   target_include_directories(kdsingleapp PUBLIC ${KDSingleApplication_SOURCE_DIR}/src)
-  target_link_libraries(kdsingleapp Qt${QT_VERSION_MAJOR}::Core)
+  target_link_libraries(kdsingleapp Qt6::Core)
   target_compile_definitions(kdsingleapp PUBLIC KDSINGLEAPPLICATION_STATIC_BUILD)
 
   set_target_properties(kdsingleapp PROPERTIES AUTOMOC ON)
@@ -266,7 +262,7 @@ if(KDToolBox_ADDED)
   )
 
   target_include_directories(kdtoolbox PUBLIC ${KDToolBox_SOURCE_DIR}/qt/KDSignalThrottler/src)
-  target_link_libraries(kdtoolbox Qt${QT_VERSION_MAJOR}::Core)
+  target_link_libraries(kdtoolbox Qt6::Core)
   set_target_properties(kdtoolbox PROPERTIES AUTOMOC ON)
 endif()
 
@@ -414,5 +410,4 @@ foreach(target ${klogg_cpm_targets})
     set_property(TARGET ${target} PROPERTY INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${${target}_include_dirs})
   endif()
 endforeach()
-
 

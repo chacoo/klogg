@@ -399,24 +399,6 @@ class Configuration final : public Persistable<Configuration> {
         useBoldFont_ = bold;
     }
 
-    bool enableQtHighDpi() const
-    {
-        return enableQtHighDpi_;
-    }
-    void setEnableQtHighDpi( bool enable )
-    {
-        enableQtHighDpi_ = enable;
-    }
-
-    int scaleFactorRounding() const
-    {
-        return scaleFactorRounding_;
-    }
-    void setScaleFactorRounding( int rounding )
-    {
-        scaleFactorRounding_ = rounding;
-    }
-
     bool mainSearchHighlight() const
     {
         return enableMainSearchHighlight_;
@@ -591,10 +573,7 @@ class Configuration final : public Persistable<Configuration> {
     bool verifySslPeers_ = true;
 
     bool forceFontAntialiasing_ = false;
-    bool enableQtHighDpi_ = true;
     bool useBoldFont_ = false;
-
-    int scaleFactorRounding_ = 1;
 
     RegexpEngine regexpEngine_ = RegexpEngine::Hyperscan;
 
